@@ -1,12 +1,12 @@
-# Design System
+# Better Las Piñas Design System
 
-The visual direction is approachable civic technology: grounded greens, a restrained gold accent, rounded functional surfaces, generous space, and clear native-app navigation. The original logo combines a location pin with bamboo-like stems and does not use the Las Piñas City seal.
+The product uses an approachable civic-service visual language: Las Piñas green, restrained gold accents, warm off-white backgrounds, rounded native-app surfaces, clear status hierarchy, and compact mobile navigation. The City of Las Piñas seal identifies the experience, while documentary-style concern photos and the City Hall landmark support local context.
 
-## Tokens
+## Core tokens
 
 | Purpose | Value |
 | --- | --- |
-| Primary | `#176B45` |
+| Primary green | `#176B45` |
 | Deep green | `#104D35` |
 | Accent gold | `#D5A847` |
 | Background | `#F4F8F3` |
@@ -15,15 +15,24 @@ The visual direction is approachable civic technology: grounded greens, a restra
 | Muted text | `#65746D` |
 | Border | `#DCE7DF` |
 | Success | `#168451` |
-| Warning | `#9A6513` |
+| Warning | `#996515` |
 | Error | `#B42318` |
 
-Tokens are CSS custom properties in `frontend/src/styles/index.css` and are available to Tailwind 4 through its CSS-first pipeline. Reusable controls use 12–20px radii, subtle green-tinted shadows, a 48px default control height, and visible gold focus rings.
+Tokens live in `frontend/src/styles/index.css`. Controls favor pill or 12–24px rounded geometry, subtle green-tinted elevation, visible focus rings, and touch targets around 44–52px.
 
-## Responsive behavior
+## Layout patterns
 
-Desktop uses a compact sticky top navigation and bounded content widths. At 800px and below, primary routes move to a safe-area-aware fixed bottom navigation. At 520px, grids collapse, action buttons become full width, and report panels use edge-to-edge space. The minimum supported layout width is 320px.
+- Mobile uses a branded top app bar and five-item bottom navigation: Home, Map, Report, Track, and Profile.
+- Desktop uses a persistent sidebar for public and resident routes; staff and administrators use a role-aware workspace navigation.
+- Resident screens use progress cards, compact metrics, report lists, photographic evidence, and a vertical timeline.
+- Staff and administrator screens use operational heroes, metric cards, tabs, queues, charts, calendars, tables, and responsive detail panels.
+- Maps use green pins and routes, restrained neutral tiles, floating filters, and bottom information sheets.
+- Skeleton loaders mirror the final dashboard, list, detail, profile, analytics, and map structures.
+
+## Motion and interaction
+
+Page entrances, active navigation, buttons, cards, filters, modals, progress rings, charts, and loaders use short purposeful transitions. Horizontal concern cards use scroll snapping and touch gestures. `prefers-reduced-motion` disables nonessential animation.
 
 ## Accessibility
 
-Pages use semantic landmarks, explicit labels, keyboard navigation, focus-visible indicators, readable contrast, and status messages. Motion is reduced under `prefers-reduced-motion`. Icons supplement text rather than replacing it for critical actions.
+The interface uses semantic landmarks, explicit form labels, keyboard-operable controls, descriptive button labels, focus-visible indicators, accessible modal behavior, live status messages, readable contrast, and text labels alongside critical icons. The minimum supported viewport width is 320px.

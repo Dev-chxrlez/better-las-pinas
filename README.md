@@ -1,79 +1,74 @@
 # Better Las Piñas
 
-Better Las Piñas is a mobile-first community reporting PWA for Las Piñas residents. Public information remains available without an account; authenticated residents can submit and track persisted reports, while authorized staff review, assign, update, and resolve them.
+Better Las Piñas is a mobile-first community reporting platform for Las Piñas residents and authorized operations teams. Residents can create accounts, submit geolocated concerns with evidence, track progress, receive notifications, and review resolutions. Staff and administrators can triage, assign, route, update, resolve, and analyze persisted reports from responsive dashboards.
 
-## Stack
+## Current capabilities
 
-- Frontend: React 19, TypeScript, Vite, Tailwind CSS, React Router, Lucide, Leaflet packages, vite-plugin-pwa, Playwright
-- Backend: Laravel 12, PHP 8.2+, PostgreSQL, PHPUnit, Sanctum cookie authentication, and Spatie Permission role-based access
-- Planned geospatial support: PostgreSQL PostGIS (not required by the Phase 1 schema)
+- Resident registration, sign-in, protected sessions, and role-based routing.
+- Guided report submission with category, description, draggable map pin, GPS support, and optional photo evidence.
+- Resident dashboard, report history, detailed progress timeline, notifications, image preview, and resolution feedback.
+- Public community map showing privacy-limited resolved-report locations.
+- Staff work queues scoped by role, assignment, and officer coverage.
+- In-app directions from the assigned officer's live position to the reported location.
+- Administrator dashboard with analytics, calendars, categories, users and roles, notifications, and audit logs.
+- Mobile-first responsive layouts, content-matched skeleton loaders, transitions, and installable PWA metadata.
 
-## Structure
+## Technology
+
+- Frontend: React 19, TypeScript, Vite, React Router, Leaflet, Lucide, Tailwind CSS tooling, vite-plugin-pwa, and Playwright.
+- Backend: Laravel 12, PHP 8.2+, Sanctum session authentication, Spatie Permission, PHPUnit, and a relational database supported by Laravel.
+- Maps: OpenStreetMap tiles through Leaflet and OSRM road routing for in-app directions.
+
+## Repository structure
 
 ```text
-frontend/  React PWA, public pages, resident portal, staff/admin workspaces
-backend/   Laravel API, authentication, policies, workflow data, feature tests
-docs/      Architecture, design system, and implementation handoffs
+frontend/  React PWA for public, resident, staff, and administrator experiences
+backend/   Laravel API, authentication, policies, workflows, storage, and tests
+docs/      Architecture, design system, and current system status
 ```
-
-## Prerequisites
-
-- Node.js 22 LTS or newer and npm
-- PHP 8.2+ with `pdo_pgsql`, `mbstring`, `openssl`, `fileinfo`, `xml`, and `curl`
-- Composer 2
-- PostgreSQL 15+; PostGIS may be enabled now or in Phase 2
-
-This machine has PHP 8.2 and Composer, but PostgreSQL/`psql` and PHP `pdo_pgsql` were not detected during Phase 1. On Windows/XAMPP, enable `extension=pdo_pgsql` and `extension=pgsql` in the active `php.ini`, restart terminals/services, install PostgreSQL, then verify with `php -m` and `psql --version`.
 
 ## Local setup
 
-Frontend:
+Requirements: Node.js 22+, npm, PHP 8.2+, Composer 2, and the PHP extensions required by Laravel. PostgreSQL is recommended for deployment; SQLite can be used for local development and automated tests.
 
 ```powershell
 cd frontend
 npm install
+Copy-Item .env.example .env
 npm run dev
 ```
 
-Backend:
+In a second terminal:
 
 ```powershell
 cd backend
 composer install
 Copy-Item .env.example .env
 php artisan key:generate
-```
-
-Create a PostgreSQL database named `las_pinas_connect`, set local credentials in `backend/.env`, and copy `frontend/.env.example` to `frontend/.env`, then run:
-
-```powershell
 php artisan migrate --seed
 php artisan serve
 ```
 
-The frontend runs at `http://localhost:5173`. The API health endpoint is `http://localhost:8000/api/v1/health`.
+The frontend defaults to `http://localhost:5173`; the API defaults to `http://localhost:8000` with health information at `/api/v1/health`.
 
-Authentication uses Laravel Sanctum's stateful cookie flow. The browser first requests `/sanctum/csrf-cookie`; all API requests include credentials. Public self-registration always creates a `resident`. Staff accounts and role changes are administrator-only. Demo accounts are seeded only in `local` or `testing` when `DEMO_ACCOUNT_PASSWORD` is explicitly set to a strong value.
+## Authentication and data protection
 
-## Production auth configuration
+Authentication uses Laravel Sanctum's stateful cookie flow. Public registration creates resident accounts only; staff creation and role changes are administrator-controlled. Policies and permissions restrict resident, staff, officer, and administrator access. Uploaded report and resolution files use private storage and policy-protected download endpoints. Status history, assignments, notifications, feedback, and security-relevant actions are persisted.
 
-Serve the frontend and API over HTTPS on the same parent domain (for example `app.example.com` and `api.example.com`). Set `VITE_API_BASE_URL`, `APP_URL`, `CORS_ALLOWED_ORIGINS`, and `SANCTUM_STATEFUL_DOMAINS` to the exact production hosts. Set `SESSION_DOMAIN=.example.com`, `SESSION_SECURE_COOKIE=true`, and keep `SESSION_SAME_SITE=lax`. Never include localhost, preview deployments, or wildcard origins in production. Run migrations before serving traffic and do not configure demo accounts in production.
-
-Report photos use Laravel's private `local` disk and are not exposed by a public storage symlink. API policies enforce resident ownership, staff assignment scope, and administrator access. Status history, resident-visible updates, resolutions, notifications, feedback, and security-relevant actions are persisted.
-
-Because this demonstration intentionally has no email, SMS, or identity verification, account ownership is not independently verified. Public registration and identity assurance must be reassessed before the system processes real citizen complaints.
+Before a production launch, configure HTTPS, trusted CORS origins, Sanctum stateful domains, secure session cookies, durable database and object storage, identity verification, backups, monitoring, and an operational privacy/retention policy.
 
 ## Verification commands
 
 ```powershell
 cd frontend
 npm run lint
+npm run typecheck
 npm run build
-npx playwright test
+npm run test:e2e
 
 cd ..\backend
 php artisan test
 php artisan route:list --path=api/v1
 ```
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/DESIGN-SYSTEM.md](docs/DESIGN-SYSTEM.md), and [docs/PHASE-1-REPORT.md](docs/PHASE-1-REPORT.md).
+See [Architecture](docs/ARCHITECTURE.md), [Design System](docs/DESIGN-SYSTEM.md), and [System Status](docs/PHASE-1-REPORT.md).

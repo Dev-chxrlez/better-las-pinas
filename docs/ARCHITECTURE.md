@@ -1,27 +1,39 @@
-# Architecture
+# Better Las Piñas Architecture
 
-## System boundary
+## System overview
 
-Phase 1 has two independently runnable applications. `frontend/` is a React single-page PWA. `backend/` is a Laravel JSON API. No Phase 1 UI sends report data to the API. This boundary prevents a prototype action from being mistaken for a live submission.
+Better Las Piñas consists of a React PWA in `frontend/` and a Laravel JSON API in `backend/`. The browser communicates with the API through versioned `/api/v1` endpoints and Laravel Sanctum stateful sessions. Responses follow the shared `{ success, message, data }` envelope; validation failures add an `errors` object.
 
 ## Frontend
 
-`src/routes` owns route composition; `components/layout` contains the reusable public shell; `components/ui` and `components/shared` contain primitives; `features/reports` owns the report draft flow; `pages` owns route-level views; `lib` and `types` hold shared data and contracts. The report draft exists only in React memory and is discarded on reload.
+`src/routes` composes public and protected routes. `components/layout` contains the shared resident/public shell, `components/ui` contains reusable controls and loading states, `features/reports` owns the report wizard, and `features/portal` owns resident, staff, and administrator experiences.
 
-Public routes: `/`, `/report`, `/track`, `/map`, `/announcements`, `/about`, and the fallback 404. `/staff/login` is a disabled authentication preview. `/staff/dashboard` is a hard gate with no dashboard implementation or bypass.
+Public surfaces include onboarding, home, community map, announcements, tracking information, and about content. Authenticated residents receive dashboard, report, report-history, notification, detail, timeline, and profile routes. Staff use a separate responsive workspace whose navigation and available modules reflect their role.
 
-The service worker precaches only the application shell and static assets. There is no runtime API caching and no offline report queue.
+Leaflet renders report-selection, public resolved-report, and staff navigation maps. Residents can place or drag a pin independently of GPS. Staff routing uses the browser location API and OSRM to render an in-app road route; a direct destination line remains available when routing fails.
 
 ## Backend
 
-The API is versioned under `/api/v1`. Responses use `{ success, message, data }`; validation/error responses use `{ success, message, errors }`. Laravel handles security middleware and non-debug production errors. CORS defaults to the two local Vite origins and must be set explicitly in production.
+The API persists users, roles, permissions, barangays, categories, departments, reports, evidence attachments, staff coverage, assignments, status history, resident-visible updates, resolutions, notifications, feedback, and audit logs.
 
-Reference tables use UUID primary keys, unique names/slugs, active flags, timestamps, and indexes. Department data is intentionally unseeded because no official routing assignments were verified.
+Role scopes:
 
-## Phase 2 report schema plan
+- `resident`: submit and view owned reports.
+- `intake-officer`: review incoming reports and assign authorized officers.
+- `barangay-officer`: manage assigned reports within barangay scope.
+- `city-department-officer`: manage assigned reports within department scope.
+- `system-administrator`: full operational, access-management, category, analytics, and audit visibility.
 
-Plan separate tables for reports, guest-access grants, report media, assignments, status history, and notifications. A report should contain a UUID, human-safe display reference, reporter name, optional normalized email, category and barangay foreign keys, title/description, PostGIS point, privacy/publication flags, and timestamps. Tracking access must use a high-entropy secret stored as a one-way hash; the display reference must never authenticate access. Media should use private object storage, validated MIME/size limits, malware scanning, and signed access URLs. Status transitions and staff actions should write append-only audit records.
+Report states are `submitted`, `under_review`, `assigned`, `in_progress`, `needs_information`, `resolved`, `closed`, `rejected`, and `duplicate`. Server-side workflow rules validate allowed transitions and write history and audit records atomically.
 
-## Security posture
+## Data and file access
 
-No public admin user, password capture, login bypass, tracking token, or report endpoint exists. Secrets belong only in `backend/.env`. Future staff authorization should combine Sanctum sessions with Spatie roles/permissions and policy checks. Production CORS must list exact trusted origins.
+Reports use UUID identifiers plus resident-facing LPC references. Coordinates are stored as latitude and longitude values. Report attachments and resolution evidence remain on private storage and are returned only through authorized controller actions. Public map output exposes a limited resolved-report view rather than private report content.
+
+## Security model
+
+Registration and login are rate-limited. Public registration cannot create staff roles. Route middleware, permissions, policies, assignment scope, and administrator gates provide layered authorization. Production deployments must use exact trusted origins, HTTPS-only cookies, a protected application key, durable private file storage, backups, and operational identity verification.
+
+## External services and resilience
+
+OpenStreetMap provides map tiles and OSRM provides road routing. The core reporting workflow does not depend on routing availability: staff still receive the reported coordinates and a direct map line if an OSRM route cannot be loaded. The PWA caches application assets, not authenticated API data or pending reports.

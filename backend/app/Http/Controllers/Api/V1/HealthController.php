@@ -11,7 +11,7 @@ final class HealthController extends Controller
     {
         return response()->json([
             'success' => true,
-            'message' => 'Las Piñas Connect API is healthy.',
+            'message' => 'Better Las Piñas API is healthy.',
             'data' => ['status' => 'ok'],
         ]);
     }
