@@ -35,7 +35,7 @@ final class ReportController extends Controller
             do{$reference='LPC-'.now()->format('Ym').'-'.Str::upper(Str::random(8));}while(Report::where('reference',$reference)->exists());
             $report=Report::create(['reference'=>$reference,'reporter_id'=>$request->user()->id,'category_id'=>$validated['category_id'],'barangay_id'=>$validated['barangay_id'],'title'=>$validated['title'],'description'=>$validated['description'],'location_text'=>$validated['location_text'],'latitude'=>$validated['latitude']??null,'longitude'=>$validated['longitude']??null,'status'=>'submitted','submitted_at'=>now()]);
             ReportStatusHistory::create(['report_id'=>$report->id,'changed_by'=>$request->user()->id,'from_status'=>null,'to_status'=>'submitted','note'=>'Report submitted by resident.','visible_to_resident'=>true]);
-            if($request->hasFile('photo')) { $file=$request->file('photo'); $path=$file->store("reports/{$report->id}",'local'); ReportAttachment::create(['report_id'=>$report->id,'uploaded_by'=>$request->user()->id,'disk'=>'local','path'=>$path,'original_name'=>$file->getClientOriginalName(),'mime_type'=>$file->getMimeType()?:'application/octet-stream','size'=>$file->getSize()]); }
+            if($request->hasFile('photo')) { $file=$request->file('photo'); $disk=config('filesystems.default'); $path=$file->store("reports/{$report->id}",$disk); ReportAttachment::create(['report_id'=>$report->id,'uploaded_by'=>$request->user()->id,'disk'=>$disk,'path'=>$path,'original_name'=>$file->getClientOriginalName(),'mime_type'=>$file->getMimeType()?:'application/octet-stream','size'=>$file->getSize()]); }
             $request->user()->notify(new ReportSubmitted($report));
             AuditService::record($request,'report.created',$report,null,['status'=>'submitted','reference'=>$report->reference]);
             return $report;
@@ -78,6 +78,6 @@ final class ReportController extends Controller
     {
         $this->authorize('view', $report);
         abort_unless($report->resolution?->evidence_path, 404);
-        return Storage::disk('local')->download($report->resolution->evidence_path);
+        return Storage::disk(config('filesystems.default'))->download($report->resolution->evidence_path);
     }
 }

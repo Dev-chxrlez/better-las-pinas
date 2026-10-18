@@ -72,3 +72,7 @@ php artisan route:list --path=api/v1
 ```
 
 See [Architecture](docs/ARCHITECTURE.md), [Design System](docs/DESIGN-SYSTEM.md), and [System Status](docs/PHASE-1-REPORT.md).
+
+## Free MVP hosting
+
+The repository includes a production Docker build and Render Blueprint that serve the compiled React PWA and Laravel API from one origin. Supabase PostgreSQL and private S3-compatible Storage provide durable data and report evidence. Follow the [deployment guide](docs/DEPLOYMENT.md) to configure the required secrets and launch the free MVP.

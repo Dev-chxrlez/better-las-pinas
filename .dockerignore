@@ -1,0 +1,12 @@
+.git
+.github
+frontend/node_modules
+frontend/dist
+frontend/test-results
+frontend/playwright-report
+frontend/.env
+backend/vendor
+backend/.env
+backend/storage/logs/*.log
+backend/bootstrap/cache/*.php
+BetterLasPinas_Showreel_25s.mp4
