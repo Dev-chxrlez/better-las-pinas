@@ -81,7 +81,8 @@ export function CommunityMapPage() {
   const [barangay,setBarangay]=useState('')
   const [reports,setReports]=useState<{id:string;latitude:number;longitude:number;status:string;category:string;barangay:string}[]>([])
   const [mapError,setMapError]=useState('')
-  useEffect(()=>{void api<{data:{items:typeof reports}}>('/map/resolved-reports').then(result=>setReports(result.data.items)).catch(()=>setMapError('Resolved locations could not be loaded.'))},[])
+  const [loading,setLoading]=useState(true)
+  useEffect(()=>{void api<{data:{items:typeof reports}}>('/map/resolved-reports').then(result=>setReports(result.data.items)).catch(()=>setMapError('Resolved locations could not be loaded.')).finally(()=>setLoading(false))},[])
   const visibleReports=useMemo(()=>reports.filter(report=>(!category||report.category===category)&&(!barangay||report.barangay===barangay)),[reports,category,barangay])
   const markerPositions=useMemo<[number,number][]>(()=>visibleReports.map(report=>[report.latitude,report.longitude]),[visibleReports])
   const categories=[...new Set(reports.map(report=>report.category))].sort()
@@ -89,11 +90,17 @@ export function CommunityMapPage() {
   return <div className="map-screen">
     <header className="map-screen__header"><div><span className="screen-kicker">Public information</span><h1>Community map</h1></div><button className="map-filter-button" onClick={() => setFiltersOpen(!filtersOpen)} aria-expanded={filtersOpen}><Layers3 /> Filters</button></header>
     <div className="map-canvas">
+      {loading ? <MapLoadingSkeleton/> : <>
       <MapContainer center={[14.45, 120.98]} zoom={12} scrollWheelZoom aria-label="Map of resolved community reports in Las Piñas"><TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" /><MapViewport positions={markerPositions}/>{visibleReports.map(report=><Marker key={report.id} position={[report.latitude,report.longitude]} icon={resolvedLocationIcon} zIndexOffset={500}><Popup><div className="resolved-map-popup"><span><Navigation/> Resolved location</span><strong>{report.category}</strong><small>{report.barangay} · {report.status==='closed'?'Closed':'Resolved'}</small></div></Popup></Marker>)}</MapContainer>
       <div className={`map-filters ${filtersOpen ? 'is-open' : ''}`}><div className="map-filters__heading"><strong>Filter resolved reports</strong><button onClick={() => setFiltersOpen(false)} aria-label="Close filters"><X /></button></div><label>Category<select value={category} onChange={event=>setCategory(event.target.value)}><option value="">All categories</option>{(categories.length?categories:CATEGORIES).map(item => <option key={item}>{item}</option>)}</select></label><label>Barangay<select value={barangay} onChange={event=>setBarangay(event.target.value)}><option value="">All barangays</option>{(barangays.length?barangays:BARANGAYS).map(item => <option key={item}>{item}</option>)}</select></label></div>
       <div className={`map-sheet ${sheetOpen ? 'is-open' : ''}`}><button className="map-sheet__handle" onClick={() => setSheetOpen(!sheetOpen)} aria-expanded={sheetOpen}><span /><span className="sr-only">Toggle map information</span></button><div className="map-sheet__summary"><span className="map-sheet__icon"><Navigation /></span><div><strong>{mapError||`${visibleReports.length} resolved ${visibleReports.length===1?'location':'locations'}`}</strong><p>{visibleReports.length?'Tap a green location marker for details.':'Resolved reports with shared GPS coordinates will appear here.'}</p></div><ChevronDown /></div>{sheetOpen && <div className="map-sheet__details"><div className="map-legend"><span><i className="dot dot--green" /> Resolved location</span></div><p>Only the category, barangay, status, and submitted map position are displayed.</p></div>}</div>
+      </>}
     </div>
   </div>
+}
+
+function MapLoadingSkeleton() {
+  return <div className="map-loading-skeleton" role="status" aria-label="Loading community map" aria-live="polite"><span className="sr-only">Loading community map…</span><div className="map-skeleton-grid"><i/><i/><i/><i/><i/><i/><b/><b/><b/></div><span className="map-skeleton-marker map-skeleton-marker--one"/><span className="map-skeleton-marker map-skeleton-marker--two"/><div className="map-skeleton-sheet"><i/><div><b/><span/><span/></div><em/></div></div>
 }
 
 export function AnnouncementsPage() {
