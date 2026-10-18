@@ -199,7 +199,6 @@ body{background:var(--bg)}.mobile-appbar{height:calc(72px + env(safe-area-inset-
   .bottom-nav{transition:transform .2s ease,opacity .16s ease}
   .app-shell:has(input:focus,textarea:focus,select:focus) .bottom-nav{opacity:0;pointer-events:none;transform:translateY(calc(100% + 24px))}
   .app-shell:has(input:focus,textarea:focus,select:focus) .app-main{padding-bottom:0}
-  .report-screen:has(input:focus,textarea:focus,select:focus) .report-actions{display:none}
 }
 
 @media(max-width:899px){
