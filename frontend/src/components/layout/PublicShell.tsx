@@ -1,8 +1,7 @@
-import { Bell, CircleUserRound, FilePlus2, HelpCircle, Home, Info, LogIn, Map, Megaphone, Search, ShieldCheck } from 'lucide-react'
+import { Bell, CircleUserRound, FilePlus2, HelpCircle, Home, Info, LogIn, Map, Megaphone, Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Brand } from '../ui/Brand'
-import { DISCLAIMER } from '../../lib/constants'
 import { api } from '../../lib/api'
 import { useAuth } from '../../auth/authStore'
 
@@ -54,7 +53,6 @@ export function AppShell() {
         {primary.map(({ to, label, icon: Icon, prominent }) => <NavLink key={to} to={to} end={to === '/home' || to === '/dashboard'} className={prominent ? 'nav-report' : ''}><Icon aria-hidden="true" /><span>{label}</span></NavLink>)}
       </nav>
       <div className="sidebar-section"><p>More</p><nav aria-label="Secondary navigation">{secondary.map(({ to, label, icon: Icon }) => <NavLink key={to} to={to}><Icon aria-hidden="true" /><span>{label}</span></NavLink>)}</nav></div>
-      <div className="sidebar-notice"><ShieldCheck /><p><strong>Independent prototype</strong>Not an official city government service.</p></div>
     </aside>
 
     <div className="app-viewport">
@@ -70,7 +68,6 @@ export function AppShell() {
       </nav>
     </div>
 
-    <span className="sr-only">{DISCLAIMER}</span>
     <NavLink to="/about" className="mobile-help" aria-label="Help and about"><HelpCircle /></NavLink>
   </div>
 }

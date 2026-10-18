@@ -2,8 +2,6 @@
 
 Better Las Piñas is a mobile-first community reporting PWA for Las Piñas residents. Public information remains available without an account; authenticated residents can submit and track persisted reports, while authorized staff review, assign, update, and resolve them.
 
-> Better Las Piñas is an independent community reporting platform prototype and is not an official reporting channel of the Las Piñas City Government.
-
 ## Stack
 
 - Frontend: React 19, TypeScript, Vite, Tailwind CSS, React Router, Lucide, Leaflet packages, vite-plugin-pwa, Playwright

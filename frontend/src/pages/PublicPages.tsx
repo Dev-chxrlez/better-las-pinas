@@ -11,7 +11,7 @@ import { divIcon } from 'leaflet'
 import { Button, ButtonLink } from '../components/ui/Button'
 import { Brand } from '../components/ui/Brand'
 import { EmptyState } from '../components/shared/EmptyState'
-import { BARANGAYS, CATEGORIES, DISCLAIMER } from '../lib/constants'
+import { BARANGAYS, CATEGORIES } from '../lib/constants'
 import { api } from '../lib/api'
 
 const quickActions = [
@@ -69,7 +69,7 @@ export function TrackPage() {
         <div className="track-icon"><FileSearch /></div><h2>Enter tracking details</h2><p>Your reference number alone will never unlock private report information.</p>
         <label>Report reference<input placeholder="Enter your report reference" aria-describedby="reference-help" /></label><small id="reference-help">Provided after a future live submission.</small>
         <label>Private access key<input type="password" placeholder="Enter private access key" /></label>
-        {attempted && <div className="inline-message inline-message--warning" role="status"><AlertCircle /><span>Live tracking is not available in this prototype. No lookup was performed.</span></div>}
+        {attempted && <div className="inline-message inline-message--warning" role="status"><AlertCircle /><span>Live tracking is not available yet. No lookup was performed.</span></div>}
         <Button type="submit"><Search /> Check status</Button>
       </form>
     </div>
@@ -106,11 +106,11 @@ function MapLoadingSkeleton() {
 }
 
 export function AnnouncementsPage() {
-  return <AppPage icon={Megaphone} title="Announcements" subtitle="Verified platform and community updates will appear here."><div className="surface-card"><EmptyState icon={Bell} title="No announcements yet" message="We will not publish invented or unofficial government announcements. Check back as the prototype develops." /></div></AppPage>
+  return <AppPage icon={Megaphone} title="Announcements" subtitle="Platform and community updates will appear here."><div className="surface-card"><EmptyState icon={Bell} title="No announcements yet" message="Community announcements will appear here when available." /></div></AppPage>
 }
 
 export function AboutPage() {
-  return <AppPage icon={Info} title="About the app" subtitle="A clearer, safer path for documenting community concerns."><div className="about-stack"><article className="surface-card content-card"><span className="status-pill">Phase 1 · Foundation</span><h2>Built for residents first</h2><p>Better Las Piñas explores how residents could document road, drainage, waste, lighting, and infrastructure concerns without creating an account.</p><div className="feature-list"><span><FilePlus2 /><strong>Simple reporting</strong><small>Guided details, location, and optional evidence.</small></span><span><Navigation /><strong>Clear routing</strong><small>A future workflow for verified staff teams.</small></span><span><ShieldCheck /><strong>Private tracking</strong><small>Secure access—not a reference number alone.</small></span></div></article><aside className="surface-card independent-card"><ShieldCheck /><h2>Independent by design</h2><p>{DISCLAIMER}</p><p>Submitting the prototype form does not result in government action.</p></aside></div></AppPage>
+  return <AppPage icon={Info} title="About the app" subtitle="A clearer, safer path for documenting community concerns."><div className="about-stack about-stack--single"><article className="surface-card content-card"><span className="status-pill">Phase 1 · Foundation</span><h2>Built for residents first</h2><p>Better Las Piñas helps residents document road, drainage, waste, lighting, and infrastructure concerns in one place.</p><div className="feature-list"><span><FilePlus2 /><strong>Simple reporting</strong><small>Guided details, location, and optional evidence.</small></span><span><Navigation /><strong>Clear routing</strong><small>A structured workflow for authorized staff teams.</small></span><span><ShieldCheck /><strong>Private tracking</strong><small>Secure access—not a reference number alone.</small></span></div></article></div></AppPage>
 }
 
 function AppPage({ icon: Icon, title, subtitle, children }: { icon: LucideIcon; title: string; subtitle: string; children: React.ReactNode }) {
@@ -118,7 +118,7 @@ function AppPage({ icon: Icon, title, subtitle, children }: { icon: LucideIcon; 
 }
 
 export function StaffLoginPage() {
-  return <main className="staff-auth"><section className="staff-brand"><Brand /><div><span className="screen-kicker">Staff workspace</span><h1>One shared view of community concerns.</h1><p>Future authorized teams will triage and monitor cases through a secure workspace.</p></div><small>{DISCLAIMER}</small></section><section className="staff-login-panel"><Link to="/" className="back-link">← Return to public app</Link><div className="staff-form"><span className="staff-icon"><LockKeyhole /></span><h2>Staff sign in</h2><p>Authentication is being prepared for a later phase.</p><label>Work email<input type="email" disabled placeholder="name@organization.gov.ph" /></label><label>Password<input type="password" disabled placeholder="••••••••••••" /></label><Button disabled>Sign in</Button><div className="inline-message inline-message--warning"><Construction /> Sign-in is intentionally disabled. No credentials are accepted or stored.</div></div></section></main>
+  return <main className="staff-auth"><section className="staff-brand"><Brand /><div><span className="screen-kicker">Staff workspace</span><h1>One shared view of community concerns.</h1><p>Authorized teams can triage and monitor cases through a secure workspace.</p></div></section><section className="staff-login-panel"><Link to="/" className="back-link">← Return to public app</Link><div className="staff-form"><span className="staff-icon"><LockKeyhole /></span><h2>Staff sign in</h2><p>Authentication is being prepared for a later phase.</p><label>Work email<input type="email" disabled placeholder="name@organization.gov.ph" /></label><label>Password<input type="password" disabled placeholder="••••••••••••" /></label><Button disabled>Sign in</Button><div className="inline-message inline-message--warning"><Construction /> Sign-in is intentionally disabled. No credentials are accepted or stored.</div></div></section></main>
 }
 
 export function StaffDashboardGatePage() {
