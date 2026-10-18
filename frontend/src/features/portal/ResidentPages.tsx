@@ -19,7 +19,7 @@ export function ResidentDashboardPage() {
   const total = data ? Object.values(data.counts).reduce((sum, count) => sum + count, 0) : 0
   const resolved = data?.counts.resolved || 0; const progress = total ? Math.round((resolved / total) * 100) : 0
   return <div className="resident-dashboard portal-page">
-    <header className="resident-welcome"><div><span>{greeting}</span><h1>{user?.name.split(' ')[0] || 'Resident'}</h1><p>Here’s what’s happening with your community reports.</p></div></header>
+    <header className="resident-welcome"><div><span>{greeting}</span><h1>{user?.name.split(' ')[0] || 'Resident'}</h1></div></header>
     {error ? <LoadError message={error}/> : !data ? <Loading/> : <>
       <section className="report-progress-card"><div className="progress-ring" style={{'--progress':`${progress * 3.6}deg`} as React.CSSProperties}><span>{progress}%</span></div><div><span>Report progress</span><strong>{resolved} of {total} reports resolved</strong><p>{total ? 'Thank you for helping improve Las Piñas.' : 'Submit your first concern to get started.'}</p></div><Link to="/my-reports" aria-label="View all reports">›</Link></section>
       <div className="resident-stats"><Stat icon={FolderClock} label="Total reports" value={total}/><Stat icon={Clock3} label="In progress" value={data.counts.in_progress || 0}/><Stat icon={CheckCircle2} label="Resolved" value={resolved}/><Stat icon={Bell} label="Updates" value={data.notifications.length}/></div>
