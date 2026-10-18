@@ -193,7 +193,7 @@ body{background:var(--bg)}.mobile-appbar{height:calc(72px + env(safe-area-inset-
 /* Mobile keyboard handling: keep iOS from zooming sub-16px controls and
    remove fixed chrome while a field is being edited. */
 @media(max-width:899px){
-  input,select,textarea{font-size:16px!important}
+  input,select,textarea{font-size:16px!important;touch-action:manipulation}
   input,select,textarea,[contenteditable="true"]{scroll-margin-block:22vh 24vh}
   .app-main,.report-form-scroll,.auth-panel{scroll-padding-bottom:38vh}
   .bottom-nav{transition:transform .2s ease,opacity .16s ease}
