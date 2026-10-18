@@ -1,0 +1,3 @@
+export const DISCLAIMER = 'Better Las Piñas is an independent community reporting platform prototype and is not an official reporting channel of the Las Piñas City Government.'
+export const BARANGAYS = ['Almanza Uno','Almanza Dos','B. F. International Village','Daniel Fajardo','Elias Aldana','Ilaya','Manuyo Uno','Manuyo Dos','Pamplona Uno','Pamplona Dos','Pamplona Tres','Pilar','Pulang Lupa Uno','Pulang Lupa Dos','Talon Uno','Talon Dos','Talon Tres','Talon Kuatro','Talon Singko','Zapote'] as const
+export const CATEGORIES = ['Road Damage','Flooding and Drainage','Garbage and Waste','Streetlight Problems','Sidewalk Obstructions','Public Infrastructure','Traffic Concerns','Other Community Issues'] as const
