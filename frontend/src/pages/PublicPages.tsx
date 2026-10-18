@@ -1,10 +1,10 @@
 import {
-  AlertCircle, Bell, ChevronDown, ChevronRight, ClipboardList, Construction,
-  FilePlus2, FileSearch, Info, Layers3, Lightbulb, LockKeyhole, Map,
-  Megaphone, Navigation, Recycle, Search, ShieldCheck, Wrench, X,
+  AlertCircle, Bell, ChevronDown, ChevronLeft, ChevronRight, Construction,
+  FilePlus2, FileSearch, Info, Layers3, LockKeyhole, Map,
+  Megaphone, Navigation, Search, ShieldCheck, X,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet'
 import { divIcon } from 'leaflet'
@@ -22,12 +22,12 @@ const quickActions = [
 ]
 
 const categoryTiles = [
-  { label: 'Road Damage', icon: Construction },
-  { label: 'Flooding', icon: Layers3 },
-  { label: 'Garbage', icon: Recycle },
-  { label: 'Streetlights', icon: Lightbulb },
-  { label: 'Infrastructure', icon: Wrench },
-  { label: 'Other Issues', icon: ClipboardList },
+  { label: 'Road Damage', image: '/concerns/road-damage.webp' },
+  { label: 'Flooding', image: '/concerns/flooding.webp' },
+  { label: 'Garbage', image: '/concerns/garbage.webp' },
+  { label: 'Streetlights', image: '/concerns/streetlights.webp' },
+  { label: 'Infrastructure', image: '/concerns/infrastructure.webp' },
+  { label: 'Other Issues', image: '/concerns/other-issues.webp' },
 ]
 
 const resolvedLocationIcon=divIcon({className:'resolved-location-marker',html:'<span><i></i></span>',iconSize:[44,52],iconAnchor:[22,48],popupAnchor:[0,-45]})
@@ -39,9 +39,11 @@ function MapViewport({positions}:{positions:[number,number][]}) {
 }
 
 export function HomePage() {
+  const concernCarousel = useRef<HTMLDivElement>(null)
+  const scrollConcerns = (direction: number) => concernCarousel.current?.scrollBy({ left: direction * Math.min(concernCarousel.current.clientWidth * .82, 520), behavior: 'smooth' })
   return <div className="screen home-screen">
     <header className="dashboard-header">
-      <div><span className="screen-kicker">Good day</span><h1>Magandang araw, Las Piñero!</h1><p>How can we help your community today?</p></div>
+      <div><span className="screen-kicker">Good day</span><h1>Magandang araw, Las Piñero!</h1></div>
       <Link to="/announcements" className="desktop-header-action"><Bell /><span>Announcements</span></Link>
     </header>
 
@@ -52,7 +54,7 @@ export function HomePage() {
 
     <section className="dashboard-section"><div className="dashboard-section__title"><h2>Quick actions</h2></div><div className="quick-action-grid">{quickActions.map(({ to, label, icon: Icon, tone }) => <Link to={to} className={`quick-action quick-action--${tone}`} key={to}><span><Icon /></span><strong>{label}</strong><ChevronRight className="quick-action__arrow" /></Link>)}</div></section>
 
-    <section className="dashboard-section"><div className="dashboard-section__title"><div><h2>Common concerns</h2><p>Choose a category to start</p></div><Link to="/report">View all</Link></div><div className="category-tile-grid">{categoryTiles.map(({ label, icon: Icon }) => <Link to="/report" className="category-tile" key={label}><span><Icon /></span><small>{label}</small></Link>)}</div></section>
+    <section className="dashboard-section concern-section"><div className="dashboard-section__title"><h2>Common concerns</h2><div className="concern-carousel-actions"><button type="button" onClick={()=>scrollConcerns(-1)} aria-label="Previous concerns"><ChevronLeft/></button><button type="button" onClick={()=>scrollConcerns(1)} aria-label="Next concerns"><ChevronRight/></button><Link to="/report">View all</Link></div></div><div className="concern-carousel" ref={concernCarousel}>{categoryTiles.map(({ label, image }) => <Link to="/report" className="concern-card" key={label}><img src={image} alt="" loading="lazy"/><span><strong>{label}</strong><small>Report concern <ChevronRight/></small></span></Link>)}</div></section>
 
     <section className="dashboard-section how-card"><div className="dashboard-section__title"><div><h2>How it works</h2><p>Three simple steps</p></div></div><ol>{[['1','Submit concern','Tell us what happened.'],['2','Select location','Pinpoint where it is.'],['3','Track progress','Use private access later.']].map(([number,title,text]) => <li key={number}><span>{number}</span><div><strong>{title}</strong><p>{text}</p></div></li>)}</ol></section>
 
