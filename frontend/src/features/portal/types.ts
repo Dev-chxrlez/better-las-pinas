@@ -1,0 +1,5 @@
+export type NamedReference = { id: string; name: string }
+export type TimelineItem = { id: string; from_status: string | null; status: string; note: string | null; actor: string | null; created_at: string }
+export type ReportItem = { id: string; reference: string; title: string; description: string; location_text: string; latitude: string | null; longitude: string | null; status: string; submitted_at: string; category: NamedReference; barangay: NamedReference; attachments?: { id:string;name:string;mime_type:string;size:number;download_url:string }[]; timeline?: TimelineItem[]; updates?: { id: string; body: string; author: string; created_at: string }[]; assignment?: { officer: string; barangay_id?: string; department_id?: string } | null; resolution?: { notes: string; resolved_at: string; evidence_url:string|null; resident_rating: number | null; resident_feedback: string | null } | null }
+export const statusLabel = (status: string) => status.replaceAll('_', ' ').replace(/\b\w/g, value => value.toUpperCase())
+export const formatDate = (value: string) => new Intl.DateTimeFormat('en-PH', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value))
