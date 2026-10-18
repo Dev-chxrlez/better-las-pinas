@@ -1,7 +1,9 @@
 import { Bell, CircleUserRound, FilePlus2, HelpCircle, Home, Info, LogIn, Map, Megaphone, Search, ShieldCheck } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Brand } from '../ui/Brand'
 import { DISCLAIMER } from '../../lib/constants'
+import { api } from '../../lib/api'
 import { useAuth } from '../../auth/authStore'
 
 const publicPrimary = [
@@ -35,10 +37,15 @@ const residentSecondary = [
 export function AppShell() {
   const location = useLocation()
   const { user } = useAuth()
+  const [hasNotifications, setHasNotifications] = useState(false)
   const isResident = user?.role === 'resident'
   const primary = isResident ? residentPrimary : publicPrimary
   const secondary = isResident ? residentSecondary : publicSecondary
   const bellTarget = isResident ? '/notifications' : '/announcements'
+  useEffect(() => {
+    if (!isResident) { setHasNotifications(false); return }
+    void api<{ data: { items: { id: string }[] } }>('/notifications').then(result => setHasNotifications(result.data.items.length > 0)).catch(() => setHasNotifications(false))
+  }, [isResident, location.pathname])
 
   return <div className="app-shell">
     <aside className="app-sidebar" aria-label="Application navigation">
@@ -53,7 +60,7 @@ export function AppShell() {
     <div className="app-viewport">
       <header className="mobile-appbar">
         <Brand />
-        <NavLink to={bellTarget} className="appbar-action" aria-label={isResident ? 'Notifications' : 'Announcements'}><Bell /></NavLink>
+        <NavLink to={bellTarget} className="appbar-action" aria-label={isResident ? 'Notifications' : 'Announcements'}><Bell />{isResident && hasNotifications && <span className="appbar-notification-dot" aria-label="New notifications"/>}</NavLink>
       </header>
       <main className="app-main" id="main-content">
         <div className="screen-transition" key={location.pathname}><Outlet /></div>
